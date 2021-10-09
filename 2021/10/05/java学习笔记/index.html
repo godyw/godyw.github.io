@@ -28,7 +28,7 @@
 <meta property="og:description" content="jdbc(Java Database Connectivity)">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-10-04T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-10-08T12:07:02.597Z">
+<meta property="article:modified_time" content="2021-10-09T14:09:50.952Z">
 <meta property="article:author" content="Yww">
 <meta property="article:tag" content="笔记">
 <meta name="twitter:card" content="summary">
@@ -191,7 +191,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-08 20:07:02" itemprop="dateModified" datetime="2021-10-08T20:07:02+08:00">2021-10-08</time>
+                <time title="修改时间：2021-10-09 22:09:50" itemprop="dateModified" datetime="2021-10-09T22:09:50+08:00">2021-10-09</time>
               </span>
 
           
@@ -205,14 +205,45 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="jdbc-Java-Database-Connectivity"><a href="#jdbc-Java-Database-Connectivity" class="headerlink" title="jdbc(Java Database Connectivity)"></a>jdbc(Java Database Connectivity)</h2><span id="more"></span>
+        <h1 id="jdbc-Java-Database-Connectivity"><a href="#jdbc-Java-Database-Connectivity" class="headerlink" title="jdbc(Java Database Connectivity)"></a>jdbc(Java Database Connectivity)</h1><span id="more"></span>
 
 <ul>
 <li><p>含义</p>
 <p>即就是用java链接数据库执行sql语句的技术</p>
 </li>
 <li><p>设计理念</p>
-<p>定义了一些接口（在java.sql包中），各个数据库厂商实现接口（Driver,Connnetion,State,resultSet）</p>
+<p>定义了一些接口（在java.sql包中），各个数据库厂商实现(Driver,Connnetion,State,resultSet)</p>
+<ul>
+<li><p>Driver接口</p>
+<p>在编程中连接数据库就必须装载特定厂商的数据库驱动程序如：</p>
+<p>装载SQLServer驱动：Class.forName(“com.microsoft.sqlserver.jdbc.SQLServerDriver”);</p>
+<p>装载MySql驱动：Class.forName(“com.mysql.jdbc.Driver”);</p>
+<p>装载Oracle驱动：Class.forName(“oracle.jdbc.driver.OracleDriver”);</p>
+</li>
+<li><p>Connection接口</p>
+<p>Connection与特定数据库的连接  Connection con = DriverManager.getConnetiion(url, “user”, “psw”);</p>
+<p>常用方法：</p>
+<ul>
+<li>creatStatement(); 创建数据库发送sql的statement对象。</li>
+</ul>
+</li>
+<li><p>Statement接口（用于执行静态的sql语句并返回它所生成结果的对象）</p>
+<p>三种Statement类：</p>
+<ul>
+<li>Statement：由createStatement创建，用于发送简单的SQL语句（不带参数）。</li>
+</ul>
+</li>
+<li><p>ResultSet接口（提供检索不同类型字段的方法）常用：</p>
+<ul>
+<li>getString(int index)、getString(String columnName)：获得在数据库里是varchar、char等类型的数据对象。</li>
+<li>getInt(int index)、getInt(String columnName)：获得在数据库里是int类型的数据对象。</li>
+</ul>
+<p>ResultSet还提供了对结果集进行操作的方法：</p>
+<ul>
+<li>next()：移动到下一行。</li>
+</ul>
+</li>
+</ul>
 </li>
 <li><p>使用步骤</p>
 <ul>
@@ -223,11 +254,11 @@
 </li>
 <li><p>加载驱动程序Class.forName()</p>
 </li>
-<li><p>建立连接Connection DriverManager.getConnection(url)</p>
+<li><p>建立连接Connection DriverManager.getConnection(url, “user”, “psw”);</p>
 </li>
-<li><p>创建Statement对象 con.createStatement()</p>
+<li><p>创建执行SQL语句的Statement对象 con.createStatement()</p>
 </li>
-<li><p>执行sql</p>
+<li><p>执行sql(ResultSet)</p>
 <ol>
 <li><p>sta.executeUpdate() insert,update,dete (此方法为int 类型返回sql语句影响的行数)</p>
 </li>
@@ -235,17 +266,34 @@
 </li>
 </ol>
 </li>
-<li><p>关闭资源</p>
-</li>
+<li><p>关闭资源（close）</p>
+<h2 id="DAO1-0（Data-Access-Object）数据访问对象（持久化层设计思想）"><a href="#DAO1-0（Data-Access-Object）数据访问对象（持久化层设计思想）" class="headerlink" title="DAO1.0（Data Access Object）数据访问对象（持久化层设计思想）"></a>DAO1.0（Data Access Object）数据访问对象（持久化层设计思想）</h2></li>
+</ul>
+<ol>
+<li><p>db包 其中包含int update(), ResultSet query()以及void close()方法。</p>
+<ul>
+<li><p>int update(),它负责执行 新增，修改，删除的sql语句,返回的是sql语句影响的行数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">public int update(String sql)&#123;</span><br><span class="line">    int rows = 0;</span><br><span class="line">    try&#123;</span><br><span class="line">       Class.forName(&quot;com.microsoft.sqlserver.jdbc.SQLServerDriver&quot;);//这里面的参数是com.microsoft.sqlserver.jdbc.SQLServerDriver这个是导入的jar包中的一个类SQLServerDriver的包名，（当你使用这个类时idea会帮我们自动导入com.microsoft.sqlserver.jdbc.SQLServerDriver，我们只需要复制就好了。复制后记得删除）</span><br><span class="line">        String url =&quot;jdbc:sqlserver://localhost:1433;databaseName=pas&quot;;</span><br><span class="line">        con = DriverManager.getConnection(url,&quot;sa&quot;,&quot;sa&quot;);</span><br><span class="line">        sta = con.createStatement();</span><br><span class="line">        rows = sta.executeUpdate(sql);</span><br><span class="line">    &#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; catch (SQLException throwables) &#123;</span><br><span class="line">        throwables.printStackTrace();</span><br><span class="line">    &#125;finally &#123;</span><br><span class="line">        this.close();</span><br><span class="line">    &#125;</span><br><span class="line">    return rows;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>ResultSet query() 负责执行查询的sql语句   返回的是一个结果集</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">public ResultSet query(String sql)&#123;</span><br><span class="line">	try&#123;</span><br><span class="line">		Class.forName(&quot;com.microsoft.sqlserver.jdbc.SQLServerDriver&quot;);</span><br><span class="line">		String url = &quot;jdbc:sqlserver://localhost:1433;databaseName=pas&quot;;</span><br><span class="line">		con = DriverManager.getConnection(url);</span><br><span class="line">		sta = con.createStatement();</span><br><span class="line">		rs = sta.executeQuery(sql);</span><br><span class="line">	&#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; catch (SQLException throwables) &#123;</span><br><span class="line">        throwables.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    return rs;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>void close() 负责关闭资源</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public void close()&#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            if (rs != null)&#123;</span><br><span class="line">                rs.close();</span><br><span class="line">                rs = null;</span><br><span class="line">            &#125;</span><br><span class="line">            if (sta != null)&#123;</span><br><span class="line">                sta.close();</span><br><span class="line">                sta = null;</span><br><span class="line">            &#125;</span><br><span class="line">            if (con != null)&#123;</span><br><span class="line">                con.close();</span><br><span class="line">                con = null;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (SQLException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
-<li><p>DAO（Data Access Object）数据访问对象（持久化层设计思想）</p>
-<ol>
-<li>包 com.yourname.dao   其中是具体的模块类DAO  四个方法（save update delete query）</li>
-<li>com.yourname.test 具体的模块类DAOtest</li>
-<li>rrr</li>
-</ol>
+<li><p>包 com.yourname.dao   其中是具体的模块类DAO  四个方法（save update delete findAll</p>
+<p>这里以lessonDAO为例</p>
 </li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LessonDAO</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">()</span></span>&#123;</span><br><span class="line">        String sql = <span class="string">&quot;insert into lesson(lesson, context, score, hours) values(&#x27;数据通信&#x27;, &#x27;数据通信&#x27;, 5, 48)&quot;</span><span class="comment">//这里是要执行的sql语句。向lesson表中插入这条数据。</span></span><br><span class="line">		DBManager dbManager = <span class="keyword">new</span> DBManager();</span><br><span class="line">        <span class="keyword">int</span> rows = dbManager.update(sql);<span class="comment">//这里调用DBManager中定义的update方法，此方法返回的是sql语句影响行数。</span></span><br><span class="line">        <span class="keyword">if</span>(rows == <span class="number">1</span>)&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;新增课程成功&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            Sysout.out.println(<span class="string">&quot;新增课程失败&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">()</span></span>&#123;</span><br><span class="line">        String sql = <span class="string">&quot;update lesson set lesName = &#x27;算法分析与设计&#x27;, context = &#x27;算法分析与设计&#x27;, score = 4, hours = 36 where lesId = 8&quot;</span>;<span class="comment">//同样这里是修改的sql语句。</span></span><br><span class="line">        DBManager dbManager = <span class="keyword">new</span> DBManager();</span><br><span class="line">        <span class="keyword">int</span> rows = dbManager.update(sql);</span><br><span class="line">        <span class="keyword">if</span>(rows == <span class="number">1</span>)&#123;</span><br><span class="line">            Sysout.out.println(<span class="string">&quot;修改成功&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            Sysout.out.println(<span class="string">&quot;修改失败&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">delete</span><span class="params">()</span></span>&#123;</span><br><span class="line">        String sql = <span class="string">&quot;delete from lesson where lesId = 8&quot;</span>;</span><br><span class="line">        DBManager dbManager = <span class="keyword">new</span> DBManager();</span><br><span class="line">        <span class="keyword">int</span> rows = dbManager.update(sql);</span><br><span class="line">        <span class="keyword">if</span>(rows == <span class="number">1</span>)&#123;</span><br><span class="line">            Sysout.out.println(<span class="string">&quot;删除成功&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            Sysout.out.println(<span class="string">&quot;删除失败&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">findAll</span><span class="params">()</span></span>&#123;</span><br><span class="line">        String sql = <span class="string">&quot;select lesId, lesName, context, score, hours from lesson&quot;</span><span class="comment">//这里是查询的sql语句.</span></span><br><span class="line">        DBManager dbManager = <span class="keyword">new</span> DBManager();</span><br><span class="line">        ResultSet rs = dbManager.query(sql);<span class="comment">//这里的query方法它返回的是一个结果集，executeQuery()方法会把数据库响应的查询结果存放在ResultSet类对象中供我们使用。比如将查询到的lesson表存储在对象rs中。</span></span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            <span class="keyword">while</span>(rs.next())&#123;</span><br><span class="line">            <span class="comment">//next()方法用来判断下一条信息是否还存在，若存在它就就像一个指针一样执行一次，就向下移动一次，初始位置是第一条信息之上，也就是说执行一次后，这个指针移动到第一条记录的位置。随着循环次数依次向下移动，直到最后一条记录之后时结束。</span></span><br><span class="line">                <span class="keyword">int</span> lesId = rs.getInt(<span class="number">1</span>);</span><br><span class="line">                String lesName = rs.getString(<span class="number">2</span>);</span><br><span class="line">                String context = rs.getString(<span class="number">3</span>);</span><br><span class="line">                <span class="keyword">int</span> score = rs.getInt(<span class="number">4</span>);</span><br><span class="line">                <span class="keyword">int</span> hours = rs.getInt(<span class="number">5</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span>(SQLException e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">            dbManager.close;<span class="comment">//这里也是DBManager中的方法，用来关闭连接</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<ol start="3">
+<li><p>com.yourname.test 具体的模块类DAOtest</p>
+<p>调用LessonDAO类的四个方法进行测试。</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LessonDAOTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        LessonDAO lessonDAO = <span class="keyword">new</span> LessonDAO();</span><br><span class="line">        <span class="comment">//lessonDAO.save();</span></span><br><span class="line">        <span class="comment">//lessonDAO.update();</span></span><br><span class="line">        <span class="comment">//lessonDAO.delete();</span></span><br><span class="line">        lessonDAO.findAll();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 </ul>
 
     </div>
@@ -335,7 +383,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#jdbc-Java-Database-Connectivity"><span class="nav-number">1.</span> <span class="nav-text">jdbc(Java Database Connectivity)</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#jdbc-Java-Database-Connectivity"><span class="nav-number">1.</span> <span class="nav-text">jdbc(Java Database Connectivity)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DAO1-0%EF%BC%88Data-Access-Object%EF%BC%89%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE%E5%AF%B9%E8%B1%A1%EF%BC%88%E6%8C%81%E4%B9%85%E5%8C%96%E5%B1%82%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">DAO1.0（Data Access Object）数据访问对象（持久化层设计思想）</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
